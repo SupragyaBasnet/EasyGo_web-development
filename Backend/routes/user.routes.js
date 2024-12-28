@@ -20,7 +20,7 @@ router.post('/register', [
 
 // Login route with phone number validation
 // router.post('/login', [
-//     body('phonenumber').matches(/^\d{10}$/).withMessage('Phone number must be exactly 10 digits'),
+//     body('phoneNumber').matches(/^\d{10}$/).withMessage('Phone number must be exactly 10 digits'),
 //     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long')
 // ],
 //     userController.loginUser
