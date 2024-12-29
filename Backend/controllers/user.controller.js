@@ -36,41 +36,41 @@ module.exports.registerUser = async (req, res, next) => {
     res.status(201).json({ token, user });
 };
 
-// module.exports.loginUser = async (req, res, next) => {
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//         return res.status(400).json({ errors: errors.array() });
-//     }
+module.exports.loginUser = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
 
-//     const { phonenumber, password } = req.body;
+    const { phonenumber, password } = req.body;
 
-//     // Find the user by phone number
-//     const user = await userModel.findOne({ phonenumber }).select('+password');
+    // Find the user by phone number
+    const user = await userModel.findOne({ phonenumber }).select('+password');
 
-//     if (!user) {
-//         return res.status(401).json({ message: 'Invalid phone number or password' });
-//     }
+    if (!user) {
+        return res.status(401).json({ message: 'Invalid phone number or password' });
+    }
 
-//     // Check if the password matches
-//     const isMatch = await user.comparePassword(password);
+    // Check if the password matches
+    const isMatch = await user.comparePassword(password);
 
-//     if (!isMatch) {
-//         return res.status(401).json({ message: 'Invalid phone number or password' });
-//     }
+    if (!isMatch) {
+        return res.status(401).json({ message: 'Invalid phone number or password' });
+    }
 
-//     // Generate the authentication token
-//     const token = user.generateAuthToken();
+    // Generate the authentication token
+    const token = user.generateAuthToken();
 
-//     // Set the token in a cookie
-//     res.cookie('token', token);
+    // Set the token in a cookie
+    res.cookie('token', token);
 
-//     // Return the token and user data
-//     res.status(200).json({ token, user });
-// };
+    // Return the token and user data
+    res.status(200).json({ token, user });
+};
 
-// module.exports.getUserProfile = async (req, res, next) => {
-//     res.status(200).json(req.user);
-// };
+module.exports.getUserProfile = async (req, res, next) => {
+    res.status(200).json(req.user);
+};
 
 // module.exports.logoutUser = async (req, res, next) => {
 //     res.clearCookie('token');
