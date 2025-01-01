@@ -1,6 +1,6 @@
 const captainModel = require('../models/captain.model');
 const captainService = require('../services/captain.service');
-// const blackListTokenModel = require('../models/blackListToken.model');
+const blackListTokenModel = require('../models/blackListToken.model');
 const { validationResult } = require('express-validator');
 
 module.exports.registerCaptain = async (req, res, next) => {
@@ -39,53 +39,53 @@ module.exports.registerCaptain = async (req, res, next) => {
     res.status(201).json({ token, captain });
 };
 
-// module.exports.loginCaptain = async (req, res, next) => {
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//         return res.status(400).json({ errors: errors.array() });
-//     }
+module.exports.loginCaptain = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
 
-//     const { phonenumber, password } = req.body;
+    const { phonenumber, password } = req.body;
 
-//     // Find captain by phone number
-//     const captain = await captainModel.findOne({ phonenumber }).select('+password');
+    // Find captain by phone number
+    const captain = await captainModel.findOne({ phonenumber }).select('+password');
 
-//     if (!captain) {
-//         return res.status(401).json({ message: 'Invalid phone number or password' });
-//     }
+    if (!captain) {
+        return res.status(401).json({ message: 'Invalid phone number or password' });
+    }
 
-//     // Verify password
-//     const isMatch = await captain.comparePassword(password);
+    // Verify password
+    const isMatch = await captain.comparePassword(password);
 
-//     if (!isMatch) {
-//         return res.status(401).json({ message: 'Invalid phone number or password' });
-//     }
+    if (!isMatch) {
+        return res.status(401).json({ message: 'Invalid phone number or password' });
+    }
 
-//     // Generate token
-//     const token = captain.generateAuthToken();
+    // Generate token
+    const token = captain.generateAuthToken();
 
-//     // Set token in cookie
-//     res.cookie('token', token);
+    // Set token in cookie
+    res.cookie('token', token);
 
-//     res.status(200).json({ token, captain });
-// };
+    res.status(200).json({ token, captain });
+};
 
-// module.exports.getCaptainProfile = async (req, res, next) => {
-//     res.status(200).json({ captain: req.captain });
-// };
+module.exports.getCaptainProfile = async (req, res, next) => {
+    res.status(200).json({ captain: req.captain });
+};
 
-// module.exports.logoutCaptain = async (req, res, next) => {
-//     const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+module.exports.logoutCaptain = async (req, res, next) => {
+    const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
 
-//     if (!token) {
-//         return res.status(400).json({ message: 'No token provided' });
-//     }
+    if (!token) {
+        return res.status(400).json({ message: 'No token provided' });
+    }
 
-//     // Blacklist the token
-//     await blackListTokenModel.create({ token });
+    // Blacklist the token
+    await blackListTokenModel.create({ token });
 
-//     // Clear cookie
-//     res.clearCookie('token');
+    // Clear cookie
+    res.clearCookie('token');
 
-//     res.status(200).json({ message: 'Logout successfully' });
-// };
+    res.status(200).json({ message: 'Logout successfully' });
+};

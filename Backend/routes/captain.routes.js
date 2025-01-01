@@ -2,7 +2,7 @@ const captainController = require('../controllers/captain.controller');
 const express = require('express');
 const router = express.Router();
 const { body } = require("express-validator");
-// const authMiddleware = require('../middlewares/auth.middleware');
+const authMiddleware = require('../middlewares/auth.middleware');
 
 // Validation and routes for Captain
 
@@ -35,22 +35,22 @@ router.post('/register', [
 );
 
 // // Login route
-// router.post('/login', [
-//     body('phonenumber')
-//         .isString()
-//         .matches(/^\d{10}$/)
-//         .withMessage('Invalid phone number. Must be a 10-digit number.'),
-//     body('password')
-//         .isLength({ min: 6 })
-//         .withMessage('Password must be at least 6 characters long'),
-// ],
-//     captainController.loginCaptain
-// );
+router.post('/login', [
+    body('phonenumber')
+        .isString()
+        .matches(/^\d{10}$/)
+        .withMessage('Invalid phone number. Must be a 10-digit number.'),
+    body('password')
+        .isLength({ min: 6 })
+        .withMessage('Password must be at least 6 characters long'),
+],
+    captainController.loginCaptain
+);
 
 // // Profile route
-// router.get('/profile', authMiddleware.authCaptain, captainController.getCaptainProfile);
+router.get('/profile', authMiddleware.authCaptain, captainController.getCaptainProfile);
 
 // // Logout route
-// router.get('/logout', authMiddleware.authCaptain, captainController.logoutCaptain);
+router.get('/logout', authMiddleware.authCaptain, captainController.logoutCaptain);
 
 module.exports = router;
