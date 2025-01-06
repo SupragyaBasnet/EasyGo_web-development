@@ -11,14 +11,18 @@ const captainSchema = new mongoose.Schema({
         },
         lastname: {
             type: String,
+            required: true,
             minlength: [3, 'Lastname must be at least 3 characters long'],
         }
     },
     phonenumber: {
-        type: String,
-        required: true,
-        unique: true,
-        match: [/^\d{10}$/, 'Please enter a valid 10-digit phone number'] // Adjust regex for other formats
+        phonenumber: {
+            type: String,
+            required: true, // Ensure this field is always provided
+            unique: true,
+            minlength: [10, 'Phone number must be exactly 10 characters long'],
+            maxlength: [10, 'Phone number must be exactly 10 characters long']
+        },
     },
     password: {
         type: String,

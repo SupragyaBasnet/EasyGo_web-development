@@ -10,6 +10,7 @@ const captainRoutes = require('./routes/captain.routes');
 // const mapsRoutes = require('./routes/maps.routes');
 // const rideRoutes = require('./routes/ride.routes');
 
+
 connectToDb();
 
 app.use(cors());
