@@ -11,7 +11,7 @@ router.post('/register', [
     body('phonenumber')
         .isString()
         .matches(/^\d{10}$/)
-        .withMessage('Invalid phone number. Must be a 10-digit number.'),
+        .withMessage('Phone number must be exactly 10 digits'),
     body('fullname.firstname')
         .isLength({ min: 3 })
         .withMessage('First name must be at least 3 characters long'),
@@ -42,7 +42,7 @@ router.post('/login', [
     body('phonenumber')
         .isString()
         .matches(/^\d{10}$/)
-        .withMessage('Invalid phone number. Must be a 10-digit number.'),
+        .withMessage('Phone number must be exactly 10 digits'),
     body('password')
         .isLength({ min: 6 })
         .withMessage('Password must be at least 6 characters long'),

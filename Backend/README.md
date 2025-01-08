@@ -463,7 +463,7 @@ GET /rides/get-fare?pickup=1600+Amphitheatre+Parkway,+Mountain+View,+CA&destinat
 
 ```json
 {
-  "evCar": 50.0,
+  "auto": 50.0,
   "car": 75.0,
   "moto": 40.0
 }

@@ -16,14 +16,13 @@ const captainSchema = new mongoose.Schema({
         }
     },
     phonenumber: {
-        phonenumber: {
-            type: String,
-            required: true, // Ensure this field is always provided
-            unique: true,
-            minlength: [10, 'Phone number must be exactly 10 characters long'],
-            maxlength: [10, 'Phone number must be exactly 10 characters long']
-        },
-    },
+        type: String,
+        required: true,
+        unique: true,
+        minlength: [10, 'Phone number must be 10 characters long'],
+        maxlength: [10, 'Phone number must be 10 characters long'],
+      },
+
     password: {
         type: String,
         required: true,
