@@ -42,37 +42,39 @@ module.exports.registerCaptain = async (req, res, next) => {
 
     res.status(201).json({ token, captain });
 };
-
 module.exports.loginCaptain = async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-
     const { phonenumber, password } = req.body;
 
-    // Find captain by phone number
-    const captain = await captainModel.findOne({ phonenumber }).select('+password');
+    console.log("Login request received for:", { phonenumber, password });
 
-    if (!captain) {
-        return res.status(401).json({ message: 'Invalid phone number or password' });
+    try {
+        const captain = await captainModel.findOne({ phonenumber }).select('+password');
+
+        if (!captain) {
+            console.log("Captain not found for phone number:", phonenumber);
+            return res.status(401).json({ message: 'Invalid phone number or password' });
+        }
+
+        const isMatch = await captain.comparePassword(password);
+
+        if (!isMatch) {
+            console.log("Password mismatch for captain:", phonenumber);
+            return res.status(401).json({ message: 'Invalid phone number or password' });
+        }
+
+        const token = captain.generateAuthToken();
+        console.log("Login successful for captain:", phonenumber);
+
+        res.cookie('token', token);
+        return res.status(200).json({ token, captain });
+    } catch (error) {
+        console.error("Error during login:", error.message);
+        return res.status(500).json({ message: 'Internal server error' });
     }
-
-    // Verify password
-    const isMatch = await captain.comparePassword(password);
-
-    if (!isMatch) {
-        return res.status(401).json({ message: 'Invalid phone number or password' });
-    }
-
-    // Generate token
-    const token = captain.generateAuthToken();
-
-    // Set token in cookie
-    res.cookie('token', token);
-
-    res.status(200).json({ token, captain });
 };
+
+
+
 
 module.exports.getCaptainProfile = async (req, res, next) => {
     res.status(200).json({ captain: req.captain });

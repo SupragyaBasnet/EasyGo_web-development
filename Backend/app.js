@@ -32,5 +32,15 @@ app.use("/captains", captainRoutes);
 app.use("/maps", mapsRoutes);
 app.use('/rides', rideRoutes);
 app.use("/api/forgot-password", forgotPasswordRoutes);
+// Error Handling
+app.use((err, req, res, next) => {
+  console.error("Error:", err.message);
+  res.status(500).json({ message: "Internal Server Error", error: err.message });
+});
+
+// Start Server
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
 
 module.exports = app;

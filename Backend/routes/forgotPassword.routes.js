@@ -1,7 +1,8 @@
 const express = require("express");
-const router = express.Router();
 const { body } = require("express-validator");
 const forgotPasswordController = require("../controllers/forgotPassword.controller");
+
+const router = express.Router();
 
 // Send OTP
 router.post(
@@ -29,7 +30,7 @@ router.post(
   [
     body("email").isEmail().withMessage("Invalid email address."),
     body("otp").isString().isLength({ min: 6, max: 6 }).withMessage("Invalid OTP."),
-    body("password").isString().isLength({ min: 6 }).withMessage("Password must be at least 6 characters."),
+    body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters."),
     body("userType").isIn(["user", "captain"]).withMessage("Invalid user type."),
   ],
   forgotPasswordController.resetPassword
