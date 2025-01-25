@@ -3,16 +3,19 @@ const captainService = require('../services/captain.service');
 const blackListTokenModel = require('../models/blackListToken.model');
 const { validationResult } = require('express-validator');
 
+
 module.exports.registerCaptain = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { fullname, phonenumber, password, vehicle } = req.body;
+    const { fullname, phonenumber,email, password, vehicle } = req.body;
 
     // Check if captain already exists
-    const isCaptainAlreadyExist = await captainModel.findOne({ phonenumber });
+    const isCaptainAlreadyExist = await captainModel.findOne({
+        $or: [{ phonenumber }, { email }]
+    }).select('+password');
 
     if (isCaptainAlreadyExist) {
         return res.status(400).json({ message: 'Captain already exists' });
@@ -26,6 +29,7 @@ module.exports.registerCaptain = async (req, res, next) => {
         firstname: fullname.firstname,
         lastname: fullname.lastname,
         phonenumber,
+        email,
         password: hashedPassword,
         color: vehicle.color,
         plate: vehicle.plate,

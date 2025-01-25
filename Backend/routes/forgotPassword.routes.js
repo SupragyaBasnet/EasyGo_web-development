@@ -3,16 +3,31 @@ const router = express.Router();
 const { body } = require("express-validator");
 const forgotPasswordController = require("../controllers/forgotPassword.controller");
 
+// Send OTP
 router.post(
   "/send-otp",
-  [body("phonenumber").isString().matches(/^\d{10}$/).withMessage("Invalid phone number.")],
+  [
+    body("email").isEmail().withMessage("Invalid email address."),
+    body("userType").isIn(["user", "captain"]).withMessage("Invalid user type."),
+  ],
   forgotPasswordController.sendOtp
 );
 
+// Verify OTP
+router.post(
+  "/verify-otp",
+  [
+    body("email").isEmail().withMessage("Invalid email address."),
+    body("otp").isString().isLength({ min: 6, max: 6 }).withMessage("Invalid OTP."),
+  ],
+  forgotPasswordController.verifyOtp
+);
+
+// Reset Password
 router.post(
   "/reset-password",
   [
-    body("phonenumber").isString().matches(/^\d{10}$/).withMessage("Invalid phone number."),
+    body("email").isEmail().withMessage("Invalid email address."),
     body("otp").isString().isLength({ min: 6, max: 6 }).withMessage("Invalid OTP."),
     body("password").isString().isLength({ min: 6 }).withMessage("Password must be at least 6 characters."),
     body("userType").isIn(["user", "captain"]).withMessage("Invalid user type."),

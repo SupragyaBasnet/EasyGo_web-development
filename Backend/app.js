@@ -13,7 +13,12 @@ const forgotPasswordRoutes = require("./routes/forgotPassword.routes");
 
 connectToDb();
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173", // Frontend URL
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed methods
+  credentials: true, // Allow cookies
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -26,6 +31,6 @@ app.use("/users", userRoutes);
 app.use("/captains", captainRoutes);
 app.use("/maps", mapsRoutes);
 app.use('/rides', rideRoutes);
-app.use("/api", forgotPasswordRoutes);
+app.use("/api/forgot-password", forgotPasswordRoutes);
 
 module.exports = app;

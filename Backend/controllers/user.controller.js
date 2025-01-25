@@ -2,7 +2,7 @@ const userModel = require('../models/user.model');
 const userService = require('../services/user.service');
 const { validationResult } = require('express-validator');
 const blackListTokenModel = require('../models/blackListToken.model');
-const otpService = require("../services/otp.service");
+
 
 module.exports.registerUser = async (req, res, next) => {
     const errors = validationResult(req);
@@ -10,10 +10,12 @@ module.exports.registerUser = async (req, res, next) => {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { fullname, phonenumber, password } = req.body;
+    const { fullname, phonenumber,email, password } = req.body;
 
     // Check if the phone number already exists
-    const isUserAlready = await userModel.findOne({ phonenumber });
+    const isUserAlready = await userModel.findOne({
+        $or: [{ phonenumber }, { email }]
+      }).select("+password");
 
     if (isUserAlready) {
         return res.status(400).json({ message: 'User already exists' });
@@ -27,6 +29,7 @@ module.exports.registerUser = async (req, res, next) => {
         firstname: fullname.firstname,
         lastname: fullname.lastname,
         phonenumber,
+        email,
         password: hashedPassword
     });
 

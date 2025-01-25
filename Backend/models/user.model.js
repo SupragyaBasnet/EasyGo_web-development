@@ -27,6 +27,17 @@ const userSchema = new mongoose.Schema({
         `${props.value} is not a valid phone number! Phone number must be 10 digits.`,
     },
   },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: {
+      validator: function (v) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      },
+      message: (props) => `${props.value} is not a valid email address!`,
+    },
+  },
   password: {
     type: String,
     required: true,
@@ -56,3 +67,6 @@ userSchema.statics.hashPassword = async function (password) {
 const userModel = mongoose.model("user", userSchema);
 
 module.exports = userModel;
+
+
+

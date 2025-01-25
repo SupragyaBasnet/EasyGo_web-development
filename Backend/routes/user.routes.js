@@ -15,6 +15,9 @@ router.post(
       .withMessage("Phone number must be a string")
       .matches(/^\d{10}$/)
       .withMessage("Phone number must be exactly 10 digits"),
+      body("email")
+      .isEmail()
+      .withMessage("Invalid email address"),
     body("fullname.firstname")
       .isLength({ min: 3 })
       .withMessage("First name must be at least 3 characters long"),
