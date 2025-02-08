@@ -1,41 +1,5 @@
 const axios = require("axios");
 
-// Get coordinates of an address
-// module.exports.getAddressCoordinate = async (address) => {
-//   const sanitizeInput = (input) => input.replace(/['"]/g, " ").trim();
-//   const defaultLocation = ", Kathmandu, Nepal";
-//   const sanitizedAddress = sanitizeInput(address) + defaultLocation;
-
-//   const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-//     sanitizedAddress
-//   )}`;
-//   const headers = { "User-Agent": "EasyGo/1.0 (supragyabasnet704@gmail.com)" };
-
-//   console.log(`Original address: ${address}`);
-//   console.log(`Sanitized address: ${sanitizedAddress}`);
-//   console.log(`Requesting URL: ${url}`);
-
-//   try {
-//     const response = await axios.get(url, { headers });
-
-//     if (response.data.length === 0) {
-//       console.warn(`No results found for address: ${address}`);
-//       return { error: "No results found. Try adding more details." };
-//     }
-
-//     const location = response.data[0];
-//     return {
-//       ltd: location.lat,
-//       lng: location.lon,
-//     };
-//   } catch (error) {
-//     console.error(
-//       `Error fetching coordinates for address: ${address}`,
-//       error.message
-//     );
-//     throw new Error("Unable to fetch coordinates. Please try again later.");
-//   }
-// };
 
 module.exports.getAddressCoordinate = async (address) => {
   // ✅ Step 1: Remove house numbers and ensure generic address format
