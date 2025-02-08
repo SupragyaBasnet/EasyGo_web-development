@@ -2,15 +2,15 @@ const axios = require("axios");
 
 
 module.exports.getAddressCoordinate = async (address) => {
-  // ✅ Step 1: Remove house numbers and ensure generic address format
+  //  Step 1: Remove house numbers and ensure generic address format
   const sanitizedAddress = address
     .replace(/\d+,?/, "") // Removes leading numbers (house numbers)
     .replace(/['"]/g, " ") // Removes unnecessary quotes
     .trim();
 
-  console.log("📝 Sanitized Address:", sanitizedAddress);
+  console.log(" Sanitized Address:", sanitizedAddress);
 
-  // ✅ Step 2: Fetch coordinates
+  //  Step 2: Fetch coordinates
   const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
     sanitizedAddress
   )}&addressdetails=1&limit=1`;
@@ -20,75 +20,21 @@ module.exports.getAddressCoordinate = async (address) => {
       headers: { "User-Agent": "EasyGo/1.0 (supragyabasnet704@gmail.com)" },
     });
 
-    // ✅ Step 3: Ensure response contains valid data
+    //  Step 3: Ensure response contains valid data
     if (!response.data || response.data.length === 0) {
-      console.error("❌ No results found for address:", sanitizedAddress);
+      console.error(" No results found for address:", sanitizedAddress);
       return null; // Return null instead of an error
     }
 
-    console.log("📍 Found Location Data:", response.data[0]);
+    console.log(" Found Location Data:", response.data[0]);
 
     return { lat: response.data[0].lat, lon: response.data[0].lon };
   } catch (error) {
-    console.error("❌ Error fetching coordinates:", error.message);
+    console.error(" Error fetching coordinates:", error.message);
     return null; // Return null instead of throwing an error
   }
 };
 
-// Get structured suggestions for autocomplete
-// module.exports.getAutoCompleteSuggestions = async (input) => {
-//   const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-//     input
-//   )}&addressdetails=1&limit=5`;
-
-//   try {
-//     const response = await axios.get(url);
-//     if (!response.data || response.data.length === 0) {
-//       return { error: "No suggestions found. Try a more specific query." };
-//     }
-
-//     return response.data.map((item, index) => {
-//       // Matched substring (where the input matches in display_name)
-//       const matchOffset = item.display_name
-//         .toLowerCase()
-//         .indexOf(input.toLowerCase());
-//       const matchedSubstring = {
-//         length: input.length,
-//         offset: matchOffset !== -1 ? matchOffset : 0,
-//       };
-
-//       // Structured formatting (Main text: Name, Secondary text: Full address)
-//       const structuredFormatting = {
-//         main_text:
-//           item.address?.road ||
-//           item.address?.city ||
-//           item.address?.village ||
-//           item.address?.town ||
-//           item.address?.state ||
-//           item.address?.country,
-//         secondary_text: item.display_name,
-//       };
-
-//       // Split address into terms with offsets
-//       const terms = item.display_name.split(", ").map((term, i) => ({
-//         value: term,
-//         offset: item.display_name.indexOf(term),
-//       }));
-
-//       return {
-//         description: item.display_name, // Full formatted address
-//         matched_substrings: [matchedSubstring], // Matched substring position
-//         place_id: `place_${index + 1}`, // Simulated unique place ID
-//         reference: `ref_${index + 1}`, // Simulated reference
-//         structured_formatting: structuredFormatting, // Break down of place details
-//         terms: terms, // Address broken down with offsets
-//       };
-//     });
-//   } catch (error) {
-//     console.error("Error fetching autocomplete suggestions:", error.message);
-//     throw new Error("Unable to fetch suggestions. Please try again later.");
-//   }
-// };
 
 module.exports.getAutoCompleteSuggestions = async (input) => {
   const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
@@ -148,15 +94,15 @@ module.exports.getDistanceTime = async (origin, destination) => {
   }
 
   try {
-    // ✅ Fetch coordinates for origin and destination
+    //  Fetch coordinates for origin and destination
     const originCoordinates = await module.exports.getAddressCoordinate(origin);
     const destinationCoordinates = await module.exports.getAddressCoordinate(destination);
 
-    // 🔍 ✅ Log the coordinates to debug the issue
-    console.log("📍 Origin Coordinates:", originCoordinates);
-    console.log("📍 Destination Coordinates:", destinationCoordinates);
+    //  Log the coordinates to debug the issue
+    console.log(" Origin Coordinates:", originCoordinates);
+    console.log("Destination Coordinates:", destinationCoordinates);
 
-    // ✅ Ensure we got valid coordinates
+    //  Ensure we got valid coordinates
     if (!originCoordinates || !destinationCoordinates) {
       throw new Error("Failed to get coordinates for locations.");
     }
@@ -165,14 +111,14 @@ module.exports.getDistanceTime = async (origin, destination) => {
       throw new Error("Missing lat/lon data for locations.");
     }
 
-    // ✅ Ensure correct OSRM API format (longitude,latitude)
+    //  Ensure correct OSRM API format (longitude,latitude)
     const osrmUrl = `http://router.project-osrm.org/route/v1/driving/${originCoordinates.lon},${originCoordinates.lat};${destinationCoordinates.lon},${destinationCoordinates.lat}?overview=false`;
 
-    console.log("🔵 OSRM Request URL:", osrmUrl);
+    console.log(" OSRM Request URL:", osrmUrl);
 
     const response = await axios.get(osrmUrl);
 
-    // ✅ Check if we got a valid response
+    //  Check if we got a valid response
     if (!response.data || !response.data.routes || response.data.routes.length === 0) {
       throw new Error("No route data available.");
     }
@@ -190,7 +136,7 @@ module.exports.getDistanceTime = async (origin, destination) => {
       },
     };
   } catch (error) {
-    console.error("❌ Error fetching distance and time:", error.message);
+    console.error("Error fetching distance and time:", error.message);
     throw error;
   }
 };
