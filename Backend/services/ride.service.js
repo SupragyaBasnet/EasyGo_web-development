@@ -39,7 +39,7 @@ async function getFare(pickup, destination) {
     ),
   };
 
-  console.log("✅ Final Fare Calculated:", fare);
+  console.log("Final Fare Calculated:", fare);
 
   return fare;
 }
