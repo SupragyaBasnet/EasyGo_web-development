@@ -1,10 +1,24 @@
-const captainController = require("../controllers/captain.controller");
 const express = require("express");
 const router = express.Router();
 const { body } = require("express-validator");
-const authMiddleware = require("../middlewares/auth.middleware");
+const multer = require("multer");
+const path = require("path");
+const captainModel = require("../models/captain.model");
 
-// Validation and routes for Captain
+const authMiddleware = require("../middlewares/auth.middleware");
+const captainController = require("../controllers/captain.controller");
+
+// Multer setup (for handling file uploads)
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, "../uploads"));
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, `${uniqueSuffix}-${file.originalname}`);
+  },
+});
+const upload = multer({ storage });
 
 // Register route
 router.post(
@@ -12,13 +26,11 @@ router.post(
   [
     body("phonenumber")
       .isString()
-      .matches(/^\d{10}$/) // Match exactly 10 digits
+      .matches(/^\d{10}$/)
       .withMessage("Phone number must be exactly 10 digits")
       .notEmpty()
       .withMessage("Phone number is required"),
-      body("email")
-      .isEmail()
-      .withMessage("Invalid email address"),
+    body("email").isEmail().withMessage("Invalid email address"),
     body("fullname.firstname")
       .isLength({ min: 3 })
       .withMessage("First name must be at least 3 characters long"),
@@ -28,12 +40,12 @@ router.post(
     body("password")
       .isLength({ min: 6 })
       .withMessage("Password must be at least 6 characters long"),
-    body("vehicle.color")
+    body("vehicle.name")
       .isLength({ min: 3 })
-      .withMessage("Color must be at least 3 characters long"),
+      .withMessage("Vehicle name must be at least 3 characters long"),
     body("vehicle.plate")
       .isLength({ min: 3 })
-      .withMessage("Plate must be at least 3 characters long"),
+      .withMessage("Vehicle plate must be at least 3 characters long"),
     body("vehicle.capacity")
       .isInt({ min: 1 })
       .withMessage("Capacity must be at least 1"),
@@ -50,7 +62,7 @@ router.post(
   [
     body("phonenumber")
       .isString()
-      .matches(/^\d{10}$/) // Match exactly 10 digits
+      .matches(/^\d{10}$/)
       .withMessage("Phone number must be exactly 10 digits")
       .notEmpty()
       .withMessage("Phone number is required"),
@@ -61,18 +73,46 @@ router.post(
   captainController.loginCaptain
 );
 
-// Profile route
-router.get(
-  "/profile",
+// Get captain profile
+router.get("/profile", authMiddleware.authCaptain, captainController.getCaptainProfile);
+
+
+// Upload profile picture
+router.post(
+  "/upload-profilePicture",
   authMiddleware.authCaptain,
-  captainController.getCaptainProfile
+  upload.single("profilePicture"),
+  captainController.uploadProfilePicture
 );
 
-// Logout route
-router.get(
-  "/logout",
+
+
+// Remove Profile Picture
+
+router.put(
+  "/remove-profile-picture",
   authMiddleware.authCaptain,
-  captainController.logoutCaptain
+  captainController.removeProfilePicture
 );
+
+
+
+
+// Upload license
+router.post(
+  "/upload-license",
+  authMiddleware.authCaptain,
+  upload.single("license"),
+  captainController.uploadLicense
+);
+
+// Update settings (language & night mode)
+router.put("/update-settings", authMiddleware.authCaptain, captainController.updateSettings);
+
+// Logout captain
+router.get("/logout", authMiddleware.authCaptain, captainController.logoutCaptain);
+
+// Delete account
+router.delete("/delete", authMiddleware.authCaptain, captainController.deleteCaptain);
 
 module.exports = router;

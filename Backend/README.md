@@ -126,7 +126,7 @@ The request body should be in JSON format and include the following fields:
 - `phonenumber` (string, required): Captain's phone number (must be a valid phone number).
 - `password` (string, required): Captain's password (minimum 6 characters)
 - `vehicle` (object):
-  - `color` (string, required): Vehicle color (minimum 3 characters)
+  - `name` (string, required): Vehicle name(minimum 3 characters)
   - `plate` (string, required): Vehicle plate number (minimum 3 characters)
   - `capacity` (number, required): Vehicle passenger capacity (minimum 1)
   - `vehicleType` (string, required): Type of vehicle (must be 'car', 'motorcycle', or 'auto')
@@ -154,7 +154,7 @@ The request body should be in JSON format and include the following fields:
 - `phonenumber` (string): Captain's phone number.
 - `password` (string, required): Captain's password (minimum 6 characters).
 - `vehicle` (object):
-  - `color` (string, required): Vehicle color (minimum 3 characters).
+  - `name` (string, required): Vehicle name(minimum 3 characters).
   - `plate` (string, required): Vehicle plate number (minimum 3 characters).
   - `capacity` (number, required): Vehicle passenger capacity (minimum 1).
   - `vehicleType` (string, required): Type of vehicle (must be 'car', 'motorcycle', or 'auto').
@@ -168,7 +168,7 @@ The request body should be in JSON format and include the following fields:
   - `phonenumber` ((string): Captain's phone number.
   - `password` (string): Captain's password (minimum 6 characters).
   - `vehicle` (object):
-    - `color` (string): Vehicle color.
+    - `name` (string): Vehicle name.
     - `plate` (string): Vehicle plate number.
     - `capacity` (number): Vehicle passenger capacity.
     - `vehicleType` (string): Type of vehicle.
@@ -204,7 +204,7 @@ The request body should be in JSON format and include the following fields:
   - `phonenumber` (string): Captain's phone number.
   - `password` (string): Captain's password (minimum 6 characters).
   - `vehicle` (object):
-    - `color` (string): Vehicle color.
+    - `name` (string): Vehicle name.
     - `plate` (string): Vehicle plate number.
     - `capacity` (number): Vehicle passenger capacity.
     - `vehicleType` (string): Type of vehicle.
@@ -233,7 +233,7 @@ Requires a valid JWT token in the Authorization header:
     - `lastname` (string): Captain's last name (minimum 3 characters).   
   - `phonenumber` (string): Captain's phone number.
   - `vehicle` (object):
-    - `color` (string): Vehicle color.
+    - `name` (string): Vehicle name.
     - `plate` (string): Vehicle plate number.
     - `capacity` (number): Vehicle passenger capacity.
     - `vehicleType` (string): Type of vehicle.

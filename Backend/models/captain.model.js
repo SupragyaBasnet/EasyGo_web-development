@@ -21,10 +21,10 @@ const captainSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: function (v) {
-        return /^[0-9]{10}$/.test(v); // Ensure exactly 10 numeric characters
+        return /^[0-9]{10}$/.test(v); // Exactly 10 digits
       },
       message: (props) =>
-        `${props.value} is not a valid phone number! Phone number must be 10 digits.`,
+        `${props.value} is not a valid phone number! Must be 10 digits.`,
     },
   },
   email: {
@@ -38,11 +38,10 @@ const captainSchema = new mongoose.Schema({
       message: (props) => `${props.value} is not a valid email address!`,
     },
   },
-
   password: {
     type: String,
     required: true,
-    select: false,
+    select: false, // Prevent password from being returned by default
   },
   socketId: {
     type: String,
@@ -53,20 +52,20 @@ const captainSchema = new mongoose.Schema({
     default: "inactive",
   },
   vehicle: {
-    color: {
+    name: {
       type: String,
       required: true,
-      minlength: [3, "Color must be at least 3 characters long"],
+      minlength: [3, "Vehicle name must be at least 3 characters long"],
     },
     plate: {
       type: String,
       required: true,
-      minlength: [3, "Plate must be at least 3 characters long"],
+      minlength: [3, "Vehicle plate must be at least 3 characters long"],
     },
     capacity: {
       type: Number,
       required: true,
-      min: [1, "Capacity must be at least 1"],
+      min: [1, "Vehicle capacity must be at least 1"],
     },
     vehicleType: {
       type: String,
@@ -82,8 +81,17 @@ const captainSchema = new mongoose.Schema({
       type: Number,
     },
   },
+  isActive: {
+    type: Boolean,
+    default: false, // Indicates whether the captain is active
+  },
+  profilePicture: { type: String, default: "/uploads/default-avatar.jpeg" },
+  license: { type: String },
+  language: { type: String, default: "en" },
+  nightMode: { type: Boolean, default: false },
 });
 
+// Generate JWT
 captainSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(
     { _id: this._id, phonenumber: this.phonenumber },
@@ -93,10 +101,12 @@ captainSchema.methods.generateAuthToken = function () {
   return token;
 };
 
+// Compare Password
 captainSchema.methods.comparePassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
+// Hash Password
 captainSchema.statics.hashPassword = async function (password) {
   return await bcrypt.hash(password, 10);
 };
