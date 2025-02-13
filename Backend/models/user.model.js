@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema({
   },
   profilePicture: { type: String, default: "/path/to/image.jpeg" }, // Profile picture URL
 language: { type: String, default: "en" }, // Language preference
-nightMode: { type: Boolean, default: false }, // Night mode setting
+theme: { type: String, default: "light" },
 
   socketId: {
     type: String,

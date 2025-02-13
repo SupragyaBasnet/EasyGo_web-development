@@ -1,5 +1,8 @@
 const jwt = require("jsonwebtoken");
 const Ride = require("../models/ride.model");
+const userModel = require("../models/user.model");
+const captainModel = require("../models/captain.model");
+
 
 // Admin credentials (hardcoded)
 const ADMIN_CREDENTIALS = {
@@ -82,5 +85,25 @@ exports.getTotalDistance = async (req, res) => {
     res.json(distances);
   } catch (error) {
     res.status(500).json({ message: "Error fetching total distance", error: error.message });
+  }
+};
+
+// Fetch all registered passengers
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching users", error: error.message });
+  }
+};
+
+// Fetch all registered captains
+exports.getAllCaptains = async (req, res) => {
+  try {
+    const captains = await Captain.find();
+    res.status(200).json(captains);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching captains", error: error.message });
   }
 };
