@@ -88,7 +88,7 @@ const captainSchema = new mongoose.Schema({
   profilePicture: { type: String, default: "/uploads/default-avatar.jpeg" },
   license: { type: String },
   language: { type: String, default: "en" },
-  nightMode: { type: Boolean, default: false },
+  theme: { type: String, default: "light" },
 });
 
 // Generate JWT

@@ -1,26 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const { body } = require("express-validator");
-const multer = require("multer");
-const path = require("path");
-const captainModel = require("../models/captain.model");
-
+const upload = require("../middlewares/upload.middleware");
 const authMiddleware = require("../middlewares/auth.middleware");
 const captainController = require("../controllers/captain.controller");
 
-// Multer setup (for handling file uploads)
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../uploads"));
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, `${uniqueSuffix}-${file.originalname}`);
-  },
-});
-const upload = multer({ storage });
 
-// Register route
 router.post(
   "/register",
   [
@@ -73,11 +58,10 @@ router.post(
   captainController.loginCaptain
 );
 
-// Get captain profile
 router.get("/profile", authMiddleware.authCaptain, captainController.getCaptainProfile);
 
 
-// Upload profile picture
+// Profile Picture Routes
 router.post(
   "/upload-profilePicture",
   authMiddleware.authCaptain,
@@ -85,34 +69,15 @@ router.post(
   captainController.uploadProfilePicture
 );
 
-
-
-// Remove Profile Picture
-
 router.put(
-  "/remove-profile-picture",
+  "/remove-profilePicture",
   authMiddleware.authCaptain,
   captainController.removeProfilePicture
 );
 
-
-
-
-// Upload license
-router.post(
-  "/upload-license",
-  authMiddleware.authCaptain,
-  upload.single("license"),
-  captainController.uploadLicense
-);
-
-// Update settings (language & night mode)
+router.post("/upload-license", authMiddleware.authCaptain, upload.single("license"), captainController.uploadLicense);
 router.put("/update-settings", authMiddleware.authCaptain, captainController.updateSettings);
-
-// Logout captain
 router.get("/logout", authMiddleware.authCaptain, captainController.logoutCaptain);
-
-// Delete account
 router.delete("/delete", authMiddleware.authCaptain, captainController.deleteCaptain);
 
 module.exports = router;

@@ -30,16 +30,15 @@ module.exports.createRide = async (req, res) => {
       vehicleType,
     });
 
-    res.status(201).json(ride);
-
+    
     // Get coordinates for pickup location
     const pickupCoordinates = await mapService.getAddressCoordinate(pickup);
     if (
       !pickupCoordinates ||
       !pickupCoordinates.ltd ||
       !pickupCoordinates.lng
-    ) {
-      console.error(" Pickup coordinates not found");
+      ) {
+        console.error(" Pickup coordinates not found");
       return;
     }
 
@@ -48,7 +47,9 @@ module.exports.createRide = async (req, res) => {
       pickupCoordinates.ltd,
       pickupCoordinates.lng,
       2
-    );
+      );
+
+    res.status(201).json(captainsInRadius);
     if (!captainsInRadius.length) {
       console.log(" No captains found nearby");
       return;

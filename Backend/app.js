@@ -13,6 +13,7 @@ const forgotPasswordRoutes = require("./routes/forgotPassword.routes");
 const vehicleRoutes = require("./routes/vehicle.routes");
 const path = require("path");
 
+const adminRoutes = require("./routes/admin.routes");
 
 
 connectToDb();
@@ -41,6 +42,7 @@ app.use("/maps", mapsRoutes);
 app.use("/rides", rideRoutes);
 app.use("/api/forgot-password", forgotPasswordRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/admin", adminRoutes);
 
 // Error Handling
 app.use((err, req, res, next) => {

@@ -89,9 +89,6 @@ module.exports.loginCaptain = async (req, res, next) => {
     }
 };
 
-module.exports.getCaptainProfile = async (req, res, next) => {
-    res.status(200).json({ captain: req.captain });
-};
 
 module.exports.logoutCaptain = async (req, res, next) => {
     const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
@@ -109,43 +106,56 @@ module.exports.logoutCaptain = async (req, res, next) => {
     res.status(200).json({ message: 'Logout successfully' });
 };
 
+
 module.exports.getCaptainProfile = async (req, res) => {
-    try {
-      console.log("Fetching captain details for:", req.captain?._id);
-      const captain = await captainModel.findById(req.captain?._id);
-  
-      if (!captain) {
-        console.log("Captain not found");
-        return res.status(404).json({ message: "Captain not found" });
-      }
-  
-      const profilePictureUrl = captain.profilePicture
-        ? `${process.env.BASE_URL}${captain.profilePicture}`
-        : "/uploads/default-avatar.jpeg"; // ✅ Ensure valid profile picture
-  
-      res.status(200).json({
-        captain: {
-          ...captain.toObject(),
-          profilePicture: profilePictureUrl, // ✅ Always return profilePicture
-        },
-      });
-    } catch (error) {
-      console.error("Error fetching captain profile:", error.message);
-      res.status(500).json({ message: "Internal Server Error" });
+  try {
+    if (!req.captain || !req.captain._id) {
+      return res.status(401).json({ message: "Unauthorized access" });
     }
-  };
+
+    const captain = await captainModel.findById(req.captain._id);
+    if (!captain) {
+      return res.status(404).json({ message: "Captain not found" });
+    }
+
+    res.status(200).json({
+      captain: {
+        fullname: captain.fullname,
+        phonenumber: captain.phonenumber,
+        profilePicture: captain.profilePicture || "/uploads/default-avatar.jpeg",
+        language: captain.language || "en",
+        theme: captain.theme || "light",
+        license: captain.license || null, // Ensure license is returned
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching captain profile:", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 
 module.exports.uploadProfilePicture = async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
+
+    if (!req.captain || !req.captain._id) {
+      return res.status(401).json({ message: "Unauthorized access" });
+    }
+
     const captain = await captainModel.findById(req.captain._id);
+    if (!captain) {
+      return res.status(404).json({ message: "Captain not found" });
+    }
+
     captain.profilePicture = `/uploads/${req.file.filename}`;
     await captain.save();
+
     res.status(200).json({
       message: "Profile picture uploaded successfully",
       profilePicture: captain.profilePicture,
+      captain, // Return updated captain data
     });
   } catch (error) {
     console.error("Error uploading profile picture:", error.message);
@@ -154,38 +164,52 @@ module.exports.uploadProfilePicture = async (req, res) => {
 };
 
 module.exports.removeProfilePicture = async (req, res) => {
-    try {
-      const captain = await captainModel.findById(req.captain._id);
-      if (!captain) {
-        return res.status(404).json({ message: "Captain not found" });
-      }
-  
-      // ✅ Reset profile picture to default
-      captain.profilePicture = "/uploads/default-avatar.jpeg";
-      await captain.save();
-  
-      res.status(200).json({
-        message: "Profile picture removed successfully",
-        profilePicture: captain.profilePicture, // ✅ Send updated profile picture
-      });
-    } catch (error) {
-      console.error("Error removing profile picture:", error.message);
-      res.status(500).json({ message: "Internal Server Error" });
+  try {
+    if (!req.captain || !req.captain._id) {
+      return res.status(401).json({ message: "Unauthorized access" });
     }
-  };
-  
+
+    const captain = await captainModel.findById(req.captain._id);
+    if (!captain) {
+      return res.status(404).json({ message: "Captain not found" });
+    }
+
+    captain.profilePicture = "/uploads/default-avatar.jpeg";
+    await captain.save();
+
+    res.status(200).json({
+      message: "Profile picture removed successfully",
+      profilePicture: captain.profilePicture,
+      captain, // Return updated captain data
+    });
+  } catch (error) {
+    console.error("Error removing profile picture:", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 
 module.exports.uploadLicense = async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
+
+    if (!req.captain || !req.captain._id) {
+      return res.status(401).json({ message: "Unauthorized access" });
+    }
+
     const captain = await captainModel.findById(req.captain._id);
+    if (!captain) {
+      return res.status(404).json({ message: "Captain not found" });
+    }
+
     captain.license = `/uploads/${req.file.filename}`;
     await captain.save();
+
     res.status(200).json({
       message: "License uploaded successfully",
-      captain,
+      license: captain.license, // Return updated license
+      captain, // Return updated captain data
     });
   } catch (error) {
     console.error("Error uploading license:", error.message);
@@ -195,25 +219,40 @@ module.exports.uploadLicense = async (req, res) => {
 
 module.exports.updateSettings = async (req, res) => {
   try {
-    const { language, nightMode } = req.body;
+    if (!req.captain || !req.captain._id) {
+      return res.status(401).json({ message: "Unauthorized access" });
+    }
+
+    const { language, theme } = req.body;
     const captain = await captainModel.findById(req.captain._id);
-    captain.language = language;
-    captain.nightMode = nightMode;
+
+    if (!captain) {
+      return res.status(404).json({ message: "Captain not found" });
+    }
+
+    if (language !== undefined) captain.language = language;
+    if (theme !== undefined) captain.theme = theme;
+
     await captain.save();
-    res.status(200).json({ message: "Settings updated successfully" });
+
+    res.status(200).json({
+      message: "Settings updated successfully",
+      theme: captain.theme,
+      language: captain.language,
+      captain, // Return updated captain data
+    });
   } catch (error) {
     console.error("Error updating settings:", error.message);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-module.exports.logoutCaptain = (req, res) => {
-  res.clearCookie("token");
-  res.status(200).json({ message: "Logged out successfully" });
-};
-
 module.exports.deleteCaptain = async (req, res) => {
   try {
+    if (!req.captain || !req.captain._id) {
+      return res.status(401).json({ message: "Unauthorized access" });
+    }
+
     await captainModel.findByIdAndDelete(req.captain._id);
     res.status(200).json({ message: "Account deleted successfully" });
   } catch (error) {
