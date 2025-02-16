@@ -37,7 +37,7 @@ function initializeSocket(server) {
           return socket.emit("error", { message: `${userType} not found` });
         }
 
-        console.log(`${userType} with ID ${userId} joined.`);
+        // console.log(`${userType} with ID ${userId} joined.`);
       } catch (error) {
         console.error("Error updating socket ID:", error.message);
       }
@@ -93,28 +93,58 @@ function initializeSocket(server) {
 
     // ✅ UPDATE LOCATION - CHECK FOR VALID ID
     socket.on("update-location-captain", async (data) => {
+      // console.log("captain location", data);
       const { userId, location } = data;
 
       if (!mongoose.Types.ObjectId.isValid(userId)) {
         return socket.emit("error", { message: "Invalid captain ID" });
       }
 
-      if (!location || typeof location.lat !== "number" || typeof location.lng !== "number") {
+      if (!location || typeof location.ltd !== "number" || typeof location.lng !== "number") {
         return socket.emit("error", { message: "Invalid location data" });
       }
 
       try {
         await captainModel.findByIdAndUpdate(userId, {
-          location: {
-            lat: location.lat,
-            lng: location.lng,
+          $set: {
+            location: {
+              type: "Point",
+              coordinates: [location.lng, location.ltd], // ✅ MongoDB expects [longitude, latitude]
+            },
           },
         });
-        console.log(`Updated location for Captain ${userId}:`, location);
+        // console.log(`Updated location for Captain ${userId}:`, location);
       } catch (error) {
         console.error("Error updating location:", error.message);
       }
     });
+    // ✅ UPDATE LOCATION - CHECK FOR VALID ID
+// socket.on("update-location-captain", async (data) => {
+//   const { userId, location } = data;
+//   console.log("captain location received \n", data);
+
+//   if (!mongoose.Types.ObjectId.isValid(userId)) {
+//     return socket.emit("error", { message: "Invalid captain ID" });
+//   }
+
+//   if (!location || typeof location.ltd !== "number" || typeof location.lng !== "number") {
+//     return socket.emit("error", { message: "Invalid location data" });
+//   }
+
+//   try {
+//     // ✅ Update location in correct GeoJSON format
+//     await captainModel.findByIdAndUpdate(userId, {
+//       location: {
+//         type: "Point",
+//         coordinates: [location.lng, location.ltd], // ✅ GeoJSON format: [longitude, latitude]
+//       },
+//     });
+//     console.log(`✅ Updated location for Captain ${userId}:`, location);
+//   } catch (error) {
+//     console.error("❌ Error updating location:", error.message);
+//   }
+// });
+
 
     // ✅ HANDLE DISCONNECT
     socket.on("disconnect", () => {

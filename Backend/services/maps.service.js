@@ -1,4 +1,5 @@
 const axios = require("axios");
+const captainModel = require('../models/captain.model');
 
 
 module.exports.getAddressCoordinate = async (address) => {
@@ -26,7 +27,7 @@ module.exports.getAddressCoordinate = async (address) => {
       return null; // Return null instead of an error
     }
 
-    console.log(" Found Location Data:", response.data[0]);
+    console.log("Found Location Data");
 
     return { lat: response.data[0].lat, lon: response.data[0].lon };
   } catch (error) {
@@ -95,11 +96,12 @@ module.exports.getDistanceTime = async (origin, destination) => {
 
   try {
     //  Fetch coordinates for origin and destination
+    console.log("origin address: "+origin);
     const originCoordinates = await module.exports.getAddressCoordinate(origin);
     const destinationCoordinates = await module.exports.getAddressCoordinate(destination);
 
     //  Log the coordinates to debug the issue
-    console.log(" Origin Coordinates:", originCoordinates);
+    console.log("Origin Coordinates:", originCoordinates);
     console.log("Destination Coordinates:", destinationCoordinates);
 
     //  Ensure we got valid coordinates
@@ -134,6 +136,10 @@ module.exports.getDistanceTime = async (origin, destination) => {
         text: `${Math.round(route.duration / 60)} mins`,
         value: route.duration,
       },
+      originCoord: originCoordinates,
+      destinationCoord: destinationCoordinates
+      // distance: (route.distance/1000).toFixed(2),
+      // duration: (route.duration/60).toFixed(2)
     };
   } catch (error) {
     console.error("Error fetching distance and time:", error.message);
@@ -143,14 +149,57 @@ module.exports.getDistanceTime = async (origin, destination) => {
 
 
 // Get nearby captains within a radius
-module.exports.getCaptainsInTheRadius = async (
-  latitude,
-  longitude,
-  radiusKm
-) => {
-  // Mocking a response for now
-  return [
-    { _id: "captain1", socketId: "socket123", latitude, longitude },
-    { _id: "captain2", socketId: "socket456", latitude, longitude },
-  ];
+module.exports.getCaptainsInTheRadius = async (latitude, longitude, radiusKm, vehicleType) => {
+  try {
+    // Convert radius from KM to Meters (MongoDB uses meters)
+    const radiusMeters = radiusKm * 1000;
+
+    // Ensure valid vehicle type selection
+    const validVehicleTypes = ["car", "moto", "auto"];
+    if (!validVehicleTypes.includes(vehicleType)) {
+      console.log(`Invalid vehicle type: ${vehicleType}`);
+      return [];
+    }
+
+    // MongoDB geospatial query to find captains within the radius
+    const captains = await captainModel.find({
+      // isAvailable: true, // ✅ Ensure captain is available for rides
+      "vehicle.vehicleType": vehicleType, // ✅ Compare vehicle type dynamically
+      location: {
+        $nearSphere: {
+          $geometry: { type: "Point", coordinates: [longitude, latitude] }, // ✅ [lng, lat] order
+          $maxDistance: radiusMeters, // Convert km to meters
+        },
+      },
+    });
+    // await captainModel.find({
+    //   location: {
+    //     $near: {
+    //       $geometry: {
+    //         type: "Point",
+    //         coordinates: [longitude, latitude], // MongoDB requires (lon, lat) format
+    //       },
+    //       $maxDistance: radiusMeters,
+    //     },
+    //   },
+    // });
+    console.log(captains);
+    if (!captains.length) {
+      console.log(`No available captains found nearby for vehicle type: ${vehicleType}`);
+      return [];
+    }
+
+    console.log(`Found ${captains.length} captains nearby for vehicle type: ${vehicleType}`);
+
+    return captains.map((captain) => ({
+      _id: captain._id,
+      name: captain.name,
+      socketId: captain.socketId,
+      vehicleType: captain.vehicleType,
+      location: captain.location,
+    }));
+  } catch (error) {
+    console.error(" Error fetching nearby captains:", error.message);
+    return [];
+  }
 };

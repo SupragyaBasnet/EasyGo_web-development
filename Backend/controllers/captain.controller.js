@@ -120,10 +120,10 @@ module.exports.getCaptainProfile = async (req, res) => {
 
     res.status(200).json({
       captain: {
+        _id: req.captain._id,
         fullname: captain.fullname,
         phonenumber: captain.phonenumber,
         profilePicture: captain.profilePicture || "/uploads/default-avatar.jpeg",
-        language: captain.language || "en",
         theme: captain.theme || "light",
         license: captain.license || null, // Ensure license is returned
       },
