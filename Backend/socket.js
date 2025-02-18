@@ -66,11 +66,12 @@ function initializeSocket(server) {
 
     // ✅ RIDE CONFIRMED - CHECK FOR `socketId`
     socket.on("ride-confirmed", (rideData) => {
-      if (!rideData?.user?.socketId) {
+      console.log("Ride confirmed:", rideData.ride.user.socketId);
+
+      if (!rideData?.ride?.user?.socketId) {
         return console.error("Ride confirmed, but user socket ID is missing.");
       }
-      console.log("Ride confirmed:", rideData);
-      io.to(rideData.user.socketId).emit("ride-confirmed", rideData);
+      io.to(rideData.ride.user.socketId).emit("ride-confirmed", rideData.ride);
     });
 
     // ✅ RIDE STARTED
