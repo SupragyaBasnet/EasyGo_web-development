@@ -150,10 +150,15 @@ module.exports.confirmRide = async (req, res) => {
       data: {
         captain: {
           name: req.captain.name,
+          fullname: req.captain.fullname,
           profilePicture: req.captain.profilePicture || null,
+          vehicle: req.captain.vehicle
         },
-        vehicleType: ride.vehicleType, // Only one occurrence
+        // vehicleType: ride.vehicleType, // Only one occurrence
         fare: ride.fare,
+        pickup: ride.pickup,
+        destination: ride.pickup,
+        otp: 'XYZ4'
       },
     });
 

@@ -71,7 +71,7 @@ function initializeSocket(server) {
       if (!rideData?.ride?.user?.socketId) {
         return console.error("Ride confirmed, but user socket ID is missing.");
       }
-      io.to(rideData.ride.user.socketId).emit("ride-confirmed", rideData.ride);
+      // io.to(rideData.ride.user.socketId).emit("ride-confirmed", rideData.ride);
     });
 
     // ✅ RIDE STARTED
