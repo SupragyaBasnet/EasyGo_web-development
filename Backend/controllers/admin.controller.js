@@ -97,15 +97,26 @@ exports.getAllUsers = async (req, res) => {
 exports.getAllCaptains = async (req, res) => {
   try {
     console.log("Fetching all captains...");
-    
-    // ✅ Fix: Ensure `captainModel` is imported and used properly
-    const captains = await captainModel.find({});
-    
-    console.log("Captains fetched:", captains);
-    res.status(200).json(captains);
+
+    // ✅ Fetch only required fields (excluding password)
+    const captains = await captainModel.find({}, "-password").lean();
+
+    // ✅ Ensure license path is included in the response
+    const updatedCaptains = captains.map((captain) => ({
+      _id: captain._id,
+      fullname: captain.fullname,
+      phonenumber: captain.phonenumber,
+      email: captain.email,
+      vehicle: captain.vehicle,
+      license: captain.license || null, // Include license in response
+    }));
+
+    console.log("Captains fetched:", updatedCaptains);
+    res.status(200).json(updatedCaptains);
   } catch (error) {
-    console.error("Error fetching captains:", error.message);
+    console.error("❌ Error fetching captains:", error.message);
     res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 };
+
 

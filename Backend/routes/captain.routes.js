@@ -75,7 +75,7 @@ router.put(
   captainController.removeProfilePicture
 );
 
-router.post("/upload-license", authMiddleware.authCaptain, upload.single("license"), captainController.uploadLicense);
+router.post("/upload-license", authMiddleware.authCaptain, upload.single("licensePicture"), captainController.uploadLicense);
 router.put("/update-settings", authMiddleware.authCaptain, captainController.updateSettings);
 router.get("/logout", authMiddleware.authCaptain, captainController.logoutCaptain);
 router.delete("/delete", authMiddleware.authCaptain, captainController.deleteCaptain);
