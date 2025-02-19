@@ -206,22 +206,39 @@ module.exports.startRide = async (req, res) => {
 module.exports.endRide = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.error("❌ Validation errors:", errors.array());
     return res.status(400).json({ errors: errors.array() });
   }
 
   const { rideId } = req.body;
 
   try {
+    console.log("🚀 Received endRide request for rideId:", rideId);
+
+    // Check if ride exists before updating
     const ride = await rideService.endRide({ rideId, captain: req.captain });
+
+    if (!ride) {
+      console.error("❌ Error: Ride not found in database");
+      return res.status(404).json({ message: "Ride not found" });
+    }
+
+    if (!ride.user || !ride.user.socketId) {
+      console.error("❌ Error: Ride user or socketId missing");
+      return res.status(500).json({ message: "Ride user not connected" });
+    }
 
     sendMessageToSocketId(ride.user.socketId, {
       event: "ride-ended",
       data: ride,
     });
 
+    console.log("✅ Ride ended successfully:", ride);
     return res.status(200).json(ride);
   } catch (err) {
+    console.error("❌ Backend Error ending ride:", err);
     return res.status(500).json({ message: err.message });
   }
 };
+
 
