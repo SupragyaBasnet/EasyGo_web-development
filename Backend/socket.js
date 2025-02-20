@@ -57,6 +57,31 @@ function initializeSocket(server) {
         console.error("Error fetching captains:", error.message);
       }
     });
+    socket.on("captain-online", async (data) => {
+      try {
+        const updatedCaptain = await captainModel.findOneAndUpdate(
+          { _id: data.captainId },
+          { $set: { isActive: true } },
+          { new: true } // ✅ Return updated captain
+        );
+    
+        if (!updatedCaptain) {
+          console.error("❌ Captain not found:", data.captainId);
+          return;
+        }
+    
+        console.log(`✅ Captain ${data.captainId} is now active:`, updatedCaptain);
+    
+        // Fetch updated availability
+        const availability = await getVehicleAvailability();
+        io.emit("vehicle-availability-update", availability);
+      } catch (error) {
+        console.error("❌ Error updating captain status:", error.message);
+      }
+    });
+    
+    
+    
 
     // ✅ NEW RIDE REQUEST
     socket.on("new-ride", (rideData) => {
@@ -119,33 +144,6 @@ function initializeSocket(server) {
         console.error("Error updating location:", error.message);
       }
     });
-    // ✅ UPDATE LOCATION - CHECK FOR VALID ID
-// socket.on("update-location-captain", async (data) => {
-//   const { userId, location } = data;
-//   console.log("captain location received \n", data);
-
-//   if (!mongoose.Types.ObjectId.isValid(userId)) {
-//     return socket.emit("error", { message: "Invalid captain ID" });
-//   }
-
-//   if (!location || typeof location.ltd !== "number" || typeof location.lng !== "number") {
-//     return socket.emit("error", { message: "Invalid location data" });
-//   }
-
-//   try {
-//     // ✅ Update location in correct GeoJSON format
-//     await captainModel.findByIdAndUpdate(userId, {
-//       location: {
-//         type: "Point",
-//         coordinates: [location.lng, location.ltd], // ✅ GeoJSON format: [longitude, latitude]
-//       },
-//     });
-//     console.log(`✅ Updated location for Captain ${userId}:`, location);
-//   } catch (error) {
-//     console.error("❌ Error updating location:", error.message);
-//   }
-// });
-
 
     // ✅ HANDLE DISCONNECT
     socket.on("disconnect", () => {
