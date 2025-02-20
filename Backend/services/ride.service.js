@@ -192,8 +192,8 @@ module.exports.endRide = async ({ rideId, captain }) => {
     throw new Error("Ride not found");
   }
 
-  if (ride.status !== "ongoing") {
-    throw new Error("Ride not ongoing");
+  if (ride.status !== "accepted") {
+    throw new Error("Ride not accepted");
   }
 
   await rideModel.findOneAndUpdate(
