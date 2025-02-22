@@ -115,7 +115,7 @@ exports.getAllCaptains = async (req, res) => {
       phonenumber: captain.phonenumber,
       email: captain.email,
       vehicle: captain.vehicle,
-      license: captain.license || null, // Include license in response
+      license: captain.license || null, 
     }));
 
     console.log("Captains fetched:", updatedCaptains);
