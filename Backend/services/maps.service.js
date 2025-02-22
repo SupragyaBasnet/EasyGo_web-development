@@ -163,26 +163,15 @@ module.exports.getCaptainsInTheRadius = async (latitude, longitude, radiusKm, ve
 
     // MongoDB geospatial query to find captains within the radius
     const captains = await captainModel.find({
-      // isAvailable: true, // ✅ Ensure captain is available for rides
-      "vehicle.vehicleType": vehicleType, // ✅ Compare vehicle type dynamically
+      // isAvailable: true, // Ensure captain is available for rides
+      "vehicle.vehicleType": vehicleType, // Compare vehicle type dynamically
       location: {
         $nearSphere: {
-          $geometry: { type: "Point", coordinates: [longitude, latitude] }, // ✅ [lng, lat] order
+          $geometry: { type: "Point", coordinates: [longitude, latitude] }, // [lng, lat] order
           $maxDistance: radiusMeters, // Convert km to meters
         },
       },
     });
-    // await captainModel.find({
-    //   location: {
-    //     $near: {
-    //       $geometry: {
-    //         type: "Point",
-    //         coordinates: [longitude, latitude], // MongoDB requires (lon, lat) format
-    //       },
-    //       $maxDistance: radiusMeters,
-    //     },
-    //   },
-    // });
     console.log(captains);
     if (!captains.length) {
       console.log(`No available captains found nearby for vehicle type: ${vehicleType}`);

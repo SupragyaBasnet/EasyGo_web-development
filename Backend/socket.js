@@ -16,7 +16,7 @@ function initializeSocket(server) {
   io.on("connection", (socket) => {
     console.log(`Client connected: ${socket.id}`);
 
-    // ✅ JOIN EVENT - FIXED ID VALIDATION
+    // JOIN EVENT - FIXED ID VALIDATION
     socket.on("join", async (data) => {
       const { userId, userType } = data;
 
@@ -43,7 +43,7 @@ function initializeSocket(server) {
       }
     });
 
-    // ✅ CAPTAIN STATUS UPDATE
+    // CAPTAIN STATUS UPDATE
     socket.on("captain-status-update", async () => {
       try {
         const captains = await captainModel.find({ isActive: true });
@@ -66,30 +66,30 @@ function initializeSocket(server) {
         );
     
         if (!updatedCaptain) {
-          console.error("❌ Captain not found:", data.captainId);
+          console.error(" Captain not found:", data.captainId);
           return;
         }
     
-        console.log(`✅ Captain ${data.captainId} is now active:`, updatedCaptain);
+        console.log(` Captain ${data.captainId} is now active:`, updatedCaptain);
     
         // Fetch updated availability
         const availability = await getVehicleAvailability();
         io.emit("vehicle-availability-update", availability);
       } catch (error) {
-        console.error("❌ Error updating captain status:", error.message);
+        console.error(" Error updating captain status:", error.message);
       }
     });
     
     
     
 
-    // ✅ NEW RIDE REQUEST
+    //  NEW RIDE REQUEST
     socket.on("new-ride", (rideData) => {
       console.log("New ride request received:", rideData);
       io.emit("new-ride", rideData);
     });
 
-    // ✅ RIDE CONFIRMED - CHECK FOR `socketId`
+    //  RIDE CONFIRMED - CHECK FOR `socketId`
     socket.on("ride-confirmed", (rideData) => {
       console.log("Ride confirmed:", rideData.ride.user.socketId);
 
@@ -99,7 +99,7 @@ function initializeSocket(server) {
       // io.to(rideData.ride.user.socketId).emit("ride-confirmed", rideData.ride);
     });
 
-    // ✅ RIDE STARTED
+    //  RIDE STARTED
     socket.on("ride-started", (rideData) => {
       if (!rideData?.user?.socketId) {
         return console.error("Ride started, but user socket ID is missing.");
@@ -108,7 +108,7 @@ function initializeSocket(server) {
       io.to(rideData.user.socketId).emit("ride-started", rideData);
     });
 
-    // ✅ RIDE ENDED
+    //  RIDE ENDED
     socket.on("ride-ended", (rideData) => {
       if (!rideData?.user?.socketId) {
         return console.error("Ride ended, but user socket ID is missing.");
@@ -117,7 +117,7 @@ function initializeSocket(server) {
       io.to(rideData.user.socketId).emit("ride-ended");
     });
 
-    // ✅ UPDATE LOCATION - CHECK FOR VALID ID
+    //  UPDATE LOCATION - CHECK FOR VALID ID
     socket.on("update-location-captain", async (data) => {
       // console.log("captain location", data);
       const { userId, location } = data;
@@ -135,7 +135,7 @@ function initializeSocket(server) {
           $set: {
             location: {
               type: "Point",
-              coordinates: [location.lng, location.ltd], // ✅ MongoDB expects [longitude, latitude]
+              coordinates: [location.lng, location.ltd], //  MongoDB expects [longitude, latitude]
             },
           },
         });
@@ -145,14 +145,14 @@ function initializeSocket(server) {
       }
     });
 
-    // ✅ HANDLE DISCONNECT
+    //  HANDLE DISCONNECT
     socket.on("disconnect", () => {
       console.log(`Client disconnected: ${socket.id}`);
     });
   });
 }
 
-// ✅ FUNCTION TO SEND MESSAGE TO SPECIFIC SOCKET
+//  FUNCTION TO SEND MESSAGE TO SPECIFIC SOCKET
 const sendMessageToSocketId = (socketId, messageObject) => {
   console.log("Sending message to socket:", socketId, messageObject);
   if (io) {
