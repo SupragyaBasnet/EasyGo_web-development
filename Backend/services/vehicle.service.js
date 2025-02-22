@@ -10,7 +10,7 @@ const getVehicleAvailability = async () => {
   // Fetch active captains
   const captains = await captainModel.find({ isActive: true });
 
-  console.log("Active Captains Found:", captains.length, captains); //  Debugging
+  console.log("Active Captains Found:", captains.length, captains); 
 
   captains.forEach((captain) => {
     console.log(`🔹 Processing Captain: ${captain._id} - VehicleType: ${captain.vehicle?.vehicleType}`);
