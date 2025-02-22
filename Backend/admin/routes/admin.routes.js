@@ -15,8 +15,6 @@ router.get("/profile", adminAuthMiddleware, getAdminProfile);
 router.get("/total-rides", adminAuthMiddleware, getTotalRides);
 router.get("/total-fare", adminAuthMiddleware, getTotalFare);
 router.get("/total-distance", adminAuthMiddleware, getTotalDistance);
-
-// Ensure correct endpoints for fetching users & captains
 router.get("/all-users", adminAuthMiddleware, getAllUsers);
 router.get("/all-captains", adminAuthMiddleware, getAllCaptains);
 
