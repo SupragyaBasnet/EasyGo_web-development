@@ -74,8 +74,8 @@ const captainSchema = new mongoose.Schema({
     },
   },
   location: {
-    type: { type: String, enum: ["Point"], required: true, default: "Point" }, // ✅ GeoJSON type
-    coordinates: { type: [Number], required: true, default: [0, 0] }, // ✅ [lng, lat]
+    type: { type: String, enum: ["Point"], required: true, default: "Point" }, //  GeoJSON type
+    coordinates: { type: [Number], required: true, default: [0, 0] }, //  [lng, lat]
   },
   isActive: {
     type: Boolean,
