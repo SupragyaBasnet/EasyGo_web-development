@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 module.exports = (req, res, next) => {
   try {
-    // ✅ Extract token from cookies OR Authorization header
+    // Extract token from cookies OR Authorization header
     let token = req.cookies.token || (req.headers.authorization && req.headers.authorization.split(" ")[1]);
 
 
@@ -10,10 +10,10 @@ module.exports = (req, res, next) => {
       return res.status(401).json({ message: "Unauthorized: No token provided" });
     }
 
-    // ✅ Verify JWT token
+    // Verify JWT token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // ✅ Ensure the user is an admin
+    //  Ensure the user is an admin
     if (decoded.role !== "admin") {
       return res.status(403).json({ message: "Forbidden: Not an admin" });
     }
