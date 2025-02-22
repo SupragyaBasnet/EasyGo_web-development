@@ -6,10 +6,10 @@ const router = express.Router();
 router.get("/availability", async (req, res) => {
   try {
     const availability = await getVehicleAvailability();
-    console.log("🚀 Backend Data Sent:", availability); // ✅ Debugging log
+    console.log(" Backend Data Sent:", availability); // ✅ Debugging log
     res.status(200).json(availability);
   } catch (error) {
-    console.error("❌ Error fetching vehicle availability:", error);
+    console.error(" Error fetching vehicle availability:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
