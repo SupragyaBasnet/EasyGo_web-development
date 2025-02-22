@@ -80,4 +80,6 @@ router.put("/update-settings", authMiddleware.authCaptain, captainController.upd
 router.get("/logout", authMiddleware.authCaptain, captainController.logoutCaptain);
 router.delete("/delete", authMiddleware.authCaptain, captainController.deleteCaptain);
 
+
+
 module.exports = router;

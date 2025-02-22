@@ -190,8 +190,8 @@ module.exports.removeProfilePicture = async (req, res) => {
 
 module.exports.uploadLicense = async (req, res) => {
   try {
-    console.log("🔍 File Upload Attempt:", req.file); // ✅ Debug file upload
-    console.log("🔍 Captain ID:", req.captain?._id); // ✅ Debug Captain ID
+    console.log("🔍 File Upload Attempt:", req.file); // Debug file upload
+    console.log("🔍 Captain ID:", req.captain?._id); // Debug Captain ID
 
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
@@ -206,11 +206,11 @@ module.exports.uploadLicense = async (req, res) => {
       return res.status(404).json({ message: "Captain not found" });
     }
 
-    // ✅ Ensure correct path is saved
+    //  Ensure correct path is saved
     captain.license = `/uploads/${req.file.filename}`;
     await captain.save();
 
-    console.log("✅ License Uploaded:", captain.license); // Debugging
+    console.log(" License Uploaded:", captain.license); // Debugging
 
     res.status(200).json({
       message: "License uploaded successfully",
@@ -218,7 +218,7 @@ module.exports.uploadLicense = async (req, res) => {
       captain, // Return updated captain data
     });
   } catch (error) {
-    console.error("❌ Error uploading license:", error.message);
+    console.error(" Error uploading license:", error.message);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };

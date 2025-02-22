@@ -1,10 +1,11 @@
 const express = require("express");
-const adminAuthMiddleware = require("../middlewares/admin.auth.middleware");
+const adminAuthMiddleware = require("../middleware/admin.auth.middleware");
 const {
   loginAdmin, logoutAdmin, getAdminProfile,
   getTotalRides, getTotalFare, getTotalDistance,
   getAllUsers, getAllCaptains
 } = require("../controllers/admin.controller");
+
 
 const router = express.Router();
 
@@ -18,5 +19,6 @@ router.get("/total-distance", adminAuthMiddleware, getTotalDistance);
 // ✅ Ensure correct endpoints for fetching users & captains
 router.get("/all-users", adminAuthMiddleware, getAllUsers);
 router.get("/all-captains", adminAuthMiddleware, getAllCaptains);
+
 
 module.exports = router;

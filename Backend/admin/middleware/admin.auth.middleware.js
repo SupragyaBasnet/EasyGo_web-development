@@ -5,6 +5,7 @@ module.exports = (req, res, next) => {
     // ✅ Extract token from cookies OR Authorization header
     let token = req.cookies.token || (req.headers.authorization && req.headers.authorization.split(" ")[1]);
 
+
     if (!token) {
       return res.status(401).json({ message: "Unauthorized: No token provided" });
     }

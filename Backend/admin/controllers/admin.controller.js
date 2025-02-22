@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
-const Ride = require("../models/ride.model");
-const userModel = require("../models/user.model");
-const captainModel = require("../models/captain.model");
+const Ride = require("../../models/ride.model");
+const userModel = require("../../models/user.model");
+const captainModel = require("../../models/captain.model");
 
 // Admin credentials (hardcoded)
 const ADMIN_CREDENTIALS = {
@@ -53,8 +53,10 @@ exports.getAdminProfile = async (req, res) => {
 // =============== Fetch Total Rides by Date ================= //
 exports.getTotalRides = async (req, res) => {
   try {
-    const rides = await Ride.aggregate([{ $group: { _id: "$date", count: { $sum: 1 } } }]);
-    res.json(rides);
+    const rides = await Ride.aggregate([
+      { $group: { _id: null, count: { $sum: 1 } } }
+    ]);
+    res.json([{ count: rides.length > 0 ? rides[0].count : 0 }]);
   } catch (error) {
     res.status(500).json({ message: "Error fetching total rides", error: error.message });
   }
@@ -63,8 +65,10 @@ exports.getTotalRides = async (req, res) => {
 // =============== Fetch Total Fare by Date ================= //
 exports.getTotalFare = async (req, res) => {
   try {
-    const fares = await Ride.aggregate([{ $group: { _id: "$date", amount: { $sum: "$fare" } } }]);
-    res.json(fares);
+    const fares = await Ride.aggregate([
+      { $group: { _id: null, amount: { $sum: "$fare" } } }
+    ]);
+    res.json([{ amount: fares.length > 0 ? fares[0].amount : 0 }]);
   } catch (error) {
     res.status(500).json({ message: "Error fetching total fare", error: error.message });
   }
@@ -73,12 +77,15 @@ exports.getTotalFare = async (req, res) => {
 // =============== Fetch Total Distance by Vehicle Type ================= //
 exports.getTotalDistance = async (req, res) => {
   try {
-    const distances = await Ride.aggregate([{ $group: { _id: "$vehicleType", distance: { $sum: "$distance" } } }]);
-    res.json(distances);
+    const distances = await Ride.aggregate([
+      { $group: { _id: null, distance: { $sum: "$distance" } } }
+    ]);
+    res.json([{ distance: distances.length > 0 ? distances[0].distance : 0 }]);
   } catch (error) {
     res.status(500).json({ message: "Error fetching total distance", error: error.message });
   }
 };
+
 
 // =============== Fetch All Registered Users ================= //
 exports.getAllUsers = async (req, res) => {

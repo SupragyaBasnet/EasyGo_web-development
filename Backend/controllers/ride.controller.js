@@ -99,32 +99,6 @@ module.exports.getFare = async (req, res) => {
 };
 
 
-// module.exports.confirmRide = async (req, res) => {
-//   const errors = validationResult(req);
-//   if (!errors.isEmpty()) {
-//     return res.status(400).json({ errors: errors.array() });
-//   }
-
-//   const { rideId } = req.body;
-
-//   try {
-//     const ride = await rideService.confirmRide({
-//       rideId,
-//       captain: req.captain,
-//     });
-
-//     sendMessageToSocketId(ride.user.socketId, {
-//       event: "ride-confirmed",
-//       data: ride,
-//     });
-
-//     return res.status(200).json(ride);
-//   } catch (err) {
-//     console.log(err);
-//     return res.status(500).json({ message: err.message });
-//   }
-// };
-
 module.exports.confirmRide = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -150,6 +124,7 @@ module.exports.confirmRide = async (req, res) => {
       data: {
         captain: {
           name: req.captain.name,
+          phonenumber: req.captain.phonenumber,
           fullname: req.captain.fullname,
           profilePicture: req.captain.profilePicture || null,
           vehicle: req.captain.vehicle
@@ -158,6 +133,8 @@ module.exports.confirmRide = async (req, res) => {
         fare: ride.fare,
         pickup: ride.pickup,
         destination: ride.pickup,
+        distance: ride.distance ?? "Calculating...", //  Ensure distance is included
+        duration: ride.duration ?? "Calculating...", 
         otp: 'XYZ4'
       },
     });
@@ -206,25 +183,25 @@ module.exports.startRide = async (req, res) => {
 module.exports.endRide = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.error("❌ Validation errors:", errors.array());
+    console.error("Validation errors:", errors.array());
     return res.status(400).json({ errors: errors.array() });
   }
 
   const { rideId } = req.body;
 
   try {
-    console.log("🚀 Received endRide request for rideId:", rideId);
+    console.log("Received endRide request for rideId:", rideId);
 
     // Check if ride exists before updating
     const ride = await rideService.endRide({ rideId, captain: req.captain });
 
     if (!ride) {
-      console.error("❌ Error: Ride not found in database");
+      console.error("Error: Ride not found in database");
       return res.status(404).json({ message: "Ride not found" });
     }
 
     if (!ride.user || !ride.user.socketId) {
-      console.error("❌ Error: Ride user or socketId missing");
+      console.error("Error: Ride user or socketId missing");
       return res.status(500).json({ message: "Ride user not connected" });
     }
 
@@ -233,10 +210,10 @@ module.exports.endRide = async (req, res) => {
       data: ride,
     });
 
-    console.log("✅ Ride ended successfully:", ride);
+    console.log("Ride ended successfully:", ride);
     return res.status(200).json(ride);
   } catch (err) {
-    console.error("❌ Backend Error ending ride:", err);
+    console.error(" Backend Error ending ride:", err);
     return res.status(500).json({ message: err.message });
   }
 };
