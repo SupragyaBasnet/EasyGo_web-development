@@ -41,7 +41,7 @@ const Admin = mongoose.model("Admin", adminSchema);
             email: "admin@easygo.com",
             password: hashedPassword,
         });
-        console.log("✅ Default Admin Created");
+        console.log(" Default Admin Created");
     }
 })();
 
