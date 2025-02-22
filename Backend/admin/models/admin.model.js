@@ -31,7 +31,7 @@ adminSchema.methods.comparePassword = async function (password) {
 
 const Admin = mongoose.model("Admin", adminSchema);
 
-// Ensure default admin exists
+
 (async () => {
     const existingAdmin = await Admin.findOne({ username: "admin" });
     if (!existingAdmin) {
