@@ -10,7 +10,7 @@ module.exports.registerCaptain = async (req, res, next) => {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    console.log("Received Data:", req.body);  // Debugging log
+    console.log("Received Data:", req.body);  
 
     const { fullname, phonenumber, email, password, vehicle } = req.body;
 
