@@ -244,3 +244,4 @@ describe('User CRUD Operations', function () {
   });
 
 });
+
