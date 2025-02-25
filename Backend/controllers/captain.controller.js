@@ -1,7 +1,9 @@
 const captainModel = require('../models/captain.model');
+const rideModel = require('../models/ride.model');
 const captainService = require('../services/captain.service');
 const blackListTokenModel = require('../models/blackListToken.model');
 const { validationResult } = require('express-validator');
+const mongoose = require('mongoose');
 
 
 module.exports.registerCaptain = async (req, res, next) => {
@@ -118,6 +120,25 @@ module.exports.getCaptainProfile = async (req, res) => {
       return res.status(404).json({ message: "Captain not found" });
     }
 
+    const rideAgg = await rideModel.aggregate([
+      {
+          $match: {
+            captain: req.captain._id,
+            status: 'completed'
+          } // match by rider (user) id
+      },
+      {
+          $group: {
+              _id: "$captain", // group by user (rider_id)
+              totalRideCount: { $count: {} },  // count the total number of rides
+              totalFare: { $sum: "$fare" },  // sum the fares
+              totalDistance: {$sum: "$distance"}
+          }
+      }
+  ]);
+
+  console.log("===============================\n\n", rideAgg[0].totalFare);
+
     res.status(200).json({
       captain: {
         _id: req.captain._id,
@@ -126,7 +147,10 @@ module.exports.getCaptainProfile = async (req, res) => {
         profilePicture: captain.profilePicture || "/uploads/default-avatar.jpeg",
         theme: captain.theme || "light",
         license: captain.license || null, // Ensure license is returned
-      }, 
+        rideCount: rideAgg[0].totalRideCount,
+        fare: rideAgg[0].totalFare,
+        distance: rideAgg[0].totalDistance,
+      },
     });
   } catch (error) {
     console.error("Error fetching captain profile:", error.message);
