@@ -43,44 +43,52 @@ function initializeSocket(server) {
       }
     });
 
-    // CAPTAIN STATUS UPDATE
-    socket.on("captain-status-update", async () => {
-      try {
-        const captains = await captainModel.find({ isActive: true });
-        const vehicleAvailability = {
-          car: captains.filter((c) => c.vehicleType === "car").length,
-          moto: captains.filter((c) => c.vehicleType === "moto").length,
-          auto: captains.filter((c) => c.vehicleType === "auto").length,
-        };
-        io.emit("vehicle-availability-update", vehicleAvailability);
-      } catch (error) {
-        console.error("Error fetching captains:", error.message);
-      }
-    });
-    socket.on("captain-online", async (data) => {
-      try {
-        const updatedCaptain = await captainModel.findOneAndUpdate(
-          { _id: data.captainId },
-          { $set: { isActive: true } },
-          { new: true } // ✅ Return updated captain
-        );
-    
-        if (!updatedCaptain) {
-          console.error(" Captain not found:", data.captainId);
-          return;
-        }
-    
-        console.log(` Captain ${data.captainId} is now active:`, updatedCaptain);
-    
-        // Fetch updated availability
-        const availability = await getVehicleAvailability();
-        io.emit("vehicle-availability-update", availability);
-      } catch (error) {
-        console.error(" Error updating captain status:", error.message);
-      }
-    });
-    
-    
+    // // CAPTAIN STATUS UPDATE
+    // socket.on("captain-status-update", async () => {
+    //   try {
+    //     const captains = await captainModel.find({ isActive: true });
+    //     const vehicleAvailability = {
+    //       car: captains.filter((c) => c.vehicle?.vehicleType === "car").length,
+    //       moto: captains.filter((c) => c.vehicle?.vehicleType === "moto").length,
+    //       auto: captains.filter((c) => c.vehicle?.vehicleType === "auto").length,
+    //     };
+        
+    //     // Send updated availability to all clients
+    //     io.emit("vehicle-availability-update", vehicleAvailability);
+    //   } catch (error) {
+    //     console.error(" Error fetching captains:", error.message);
+    //   }
+    // });
+  
+    // //  CAPTAIN GOES ONLINE
+    // socket.on("captain-online", async (data) => {
+    //   try {
+    //     const updatedCaptain = await captainModel.findOneAndUpdate(
+    //       { _id: data.captainId },
+    //       { $set: { isActive: true } },
+    //       { new: true } //  Return updated captain
+    //     );
+  
+    //     if (!updatedCaptain) {
+    //       console.error(" Captain not found:", data.captainId);
+    //       return;
+    //     }
+  
+    //     console.log(`✅ Captain ${data.captainId} is now active:`, updatedCaptain);
+  
+    //     // Fetch updated availability
+    //     const availability = await getVehicleAvailability();
+    //     io.emit("vehicle-availability-update", availability);
+    //   } catch (error) {
+    //     console.error(" Error updating captain status:", error.message);
+    //   }
+    // });
+  
+    // //  Handle client disconnect
+    // socket.on("disconnect", () => {
+    //   console.log(" Client disconnected:", socket.id);
+    // });
+
     
 
     //  NEW RIDE REQUEST

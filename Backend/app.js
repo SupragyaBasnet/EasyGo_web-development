@@ -10,7 +10,7 @@ const captainRoutes = require("./routes/captain.routes");
 const mapsRoutes = require("./routes/maps.routes");
 const rideRoutes = require("./routes/ride.routes");
 const forgotPasswordRoutes = require("./routes/forgotPassword.routes");
-const vehicleRoutes = require("./routes/vehicle.routes");
+
 const path = require("path");
 
 const adminRoutes = require("./admin/routes/admin.routes");
@@ -35,7 +35,7 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-app.use("/vehicles", vehicleRoutes);
+// app.use("/vehicles", vehicleRoutes);
 
 app.use("/users", userRoutes);
 app.use("/captains", captainRoutes);

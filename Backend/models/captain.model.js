@@ -70,12 +70,12 @@ const captainSchema = new mongoose.Schema({
     vehicleType: {
       type: String,
       required: true,
-      enum: ["car", "motorcycle", "auto"],
+      enum: ["car", "moto", "auto"],
     },
   },
   location: {
     type: { type: String, enum: ["Point"], required: true, default: "Point" }, //  GeoJSON type
-    coordinates: { type: [Number], required: true, default: [0, 0] }, //  [lng, lat]
+    coordinates: { type: [Number], required: true, default: null }, //  [lng, lat]
   },
   isActive: {
     type: Boolean,

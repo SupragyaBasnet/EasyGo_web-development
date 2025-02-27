@@ -40,5 +40,4 @@ router.post('/end-ride',
 )
 
 
-
 module.exports = router;
