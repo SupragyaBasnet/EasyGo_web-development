@@ -137,7 +137,10 @@ module.exports.getCaptainProfile = async (req, res) => {
       }
   ]);
 
-  console.log("===============================\n\n", rideAgg[0].totalFare);
+  console.log(" Ride Aggregation Result:", rideAgg);
+
+  // Ensure `rideAgg[0]` exists before accessing properties
+  const rideData = rideAgg[0] || { totalRideCount: 0, totalFare: 0, totalDistance: 0 };
 
     res.status(200).json({
       captain: {
@@ -147,9 +150,9 @@ module.exports.getCaptainProfile = async (req, res) => {
         profilePicture: captain.profilePicture || "/uploads/default-avatar.jpeg",
         theme: captain.theme || "light",
         license: captain.license || null, // Ensure license is returned
-        rideCount: rideAgg[0].totalRideCount,
-        fare: rideAgg[0].totalFare,
-        distance: rideAgg[0].totalDistance,
+        rideCount: rideData.totalRideCount,
+        fare: rideData.totalFare,
+        distance: rideData.totalDistance,
       },
     });
   } catch (error) {
