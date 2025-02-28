@@ -44,7 +44,6 @@ async function getFare(pickup, destination) {
         baseFare.moto + distanceKm * perKmRate.moto + durationMin * perMinuteRate.moto
       ).toFixed(2)
     ),
-    distanceAway: distanceKm.toFixed(2)
   };
 
   console.log("Final Fare Calculated:", fare);
@@ -100,7 +99,7 @@ module.exports.createRide = async ({ user, pickup, destination, vehicleType }) =
     otp: getOtp(4),
     distance: (distance.value/1000).toFixed(2),
     duration: (duration.value/60).toFixed(2),
-    distanceAway,
+  
     // status: "pending",
   });
   console.log("Created Ride:", ride);

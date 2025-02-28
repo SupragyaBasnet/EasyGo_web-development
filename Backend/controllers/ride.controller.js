@@ -49,7 +49,7 @@ module.exports.createRide = async (req, res) => {
       pickupCoordinates.lat,
       pickupCoordinates.lon,
       2,
-      vehicleType 
+      vehicleType ,
       );
 
     res.status(201).json(captainsInRadius);
