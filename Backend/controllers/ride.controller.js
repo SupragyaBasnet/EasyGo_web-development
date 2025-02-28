@@ -131,7 +131,7 @@ module.exports.confirmRide = async (req, res) => {
         // vehicleType: ride.vehicleType, // Only one occurrence
         fare: ride.fare,
         pickup: ride.pickup,
-        destination: ride.pickup,
+        destination: ride.destination,
         distance: ride.distance ?? "Calculating...", //  Ensure distance is included
         duration: ride.duration ?? "Calculating...", 
         otp: 'XYZ4'
